@@ -3,7 +3,7 @@
 Steganography Tool for Python
 
 ## Install Python Dependencies
-    pip install requirements.txt
+    pip install -r requirements.txt
 
 ## Stegator Help
     python stegator.py -h
