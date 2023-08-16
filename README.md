@@ -39,6 +39,8 @@ Stegator will generate two .png files in the directory, one image will be the ke
 
 by Default Stegator will generate a 64x64 pixel image.
 
+![example](https://github.com/devklmnt/Stegator/blob/main/k.test.file.png?raw=true)
+
 ## Decode message 
 Run the following command to decode message 
 
