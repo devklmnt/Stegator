@@ -5,6 +5,8 @@ from numpy import array
 from datetime import datetime
 import sys 
 import getpass
+from AESCipher import AESCipher
+import os
 # Declaramos las variables donde almacenaremos la información
 binary_image = [] # Lista Binaria de la imagen RGBA
 plain_text=[] # Lista binaria del texto a ocultar
@@ -157,34 +159,79 @@ def decode_image(stg,key):
 # Retorna: 
 #**********************************************************************
 def encrypt_message(pwd, text):
-    pass
+    crypto  =  AESCipher(pwd)
+    message = crypto.encrypt(text)
+    return(message)
+#**********************************************************************
+# FUNCIÓN: decrypt_message(pwd, text)
+#**********************************************************************
+# Descripción: 
+# Retorna: 
+#**********************************************************************
+def decrypt_message(pwd, text):
+    crypto  =  AESCipher(pwd)
+    message = crypto.decrypt(text)
+    return(message)
+#**********************************************************************
+# FUNCIÓN: banner()
+#**********************************************************************
+# Descripción: 
+# Retorna: 
+#**********************************************************************
+def banner():
+    print('''
+            ███████╗████████╗███████╗ ██████╗  █████╗ ████████╗ ██████╗ ██████╗ 
+            ██╔════╝╚══██╔══╝██╔════╝██╔════╝ ██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
+            ███████╗   ██║   █████╗  ██║  ███╗███████║   ██║   ██║   ██║██████╔╝
+            ╚════██║   ██║   ██╔══╝  ██║   ██║██╔══██║   ██║   ██║   ██║██╔══██╗
+            ███████║   ██║   ███████╗╚██████╔╝██║  ██║   ██║   ╚██████╔╝██║  ██║
+            ╚══════╝   ╚═╝   ╚══════╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
+                                                                                
+                                            v0.1
+                                    Steganography Tool 
+            
+''')
 #**********************************************************************
 def run():
     #img = load_image()
     #random.show()
     #input_filename =  str(datetime.now().year) + str(datetime.now().month) + str(datetime.now().day) + str(datetime.now().hour) + str(datetime.now().minute)+ "_Key" + ".png"
     #output_filename = str(datetime.now().year) + str(datetime.now().month) + str(datetime.now().day) + str(datetime.now().hour) + str(datetime.now().minute)+ "_Stg" + ".png"
-
+    os.system('cls' if os.name == 'nt' else 'clear')
+    banner()
     if sys.argv[1] == "-e":
-        text = getpass.getpass("Enter the text to encode: ")
-        #text = sys.argv[2]
-        text = fill_message(text)
+        text = input("Enter the text to encode: ")
         filename = input("Enter the filename: ")
-        input_filename = "./k." + filename + ".png"
-        output_filename = "./s." + filename + ".png"
-        key = generate_random(64,64,input_filename)
-        binary_text = get_text(text)
-        stg_image = process_image(key, binary_text, output_filename)
-
+        os.system('cls' if os.name == 'nt' else 'clear')
+        banner()
+        password = getpass.getpass("Password for encryption: ")
+        confirm_password = getpass.getpass("Confirm password: ")
+        if password == confirm_password:
+            text = encrypt_message(password,text)
+            text = fill_message(text)
+            input_filename = "./k." + filename + ".png"
+            output_filename = "./s." + filename + ".png"
+            key = generate_random(64,64,input_filename)
+            binary_text = get_text(text)
+            stg_image = process_image(key, binary_text, output_filename)
+        else:
+            print("Error, password don't match")
+            input("Press Enter to continue...")
+            os.system('cls' if os.name == 'nt' else 'clear')
+            run()
+        
     if sys.argv[1] == "-d":
+        password = getpass.getpass("Password for encryption: ")
         key = Image.open("./k." + sys.argv[2] + ".png")
         key = key.convert("RGBA")
         stg_image = Image.open("./s." + sys.argv[2] + ".png")
         stg_image = stg_image.convert("RGBA")
         decoded_text = decode_image(stg_image,key)
-        print("Decoded Text =",decoded_text.strip())
+        decoded_text = decoded_text.strip()
+        print("Decoded Text =", decrypt_message(password,decoded_text))
 
     if sys.argv[1] == "-h":
+        os.system('cls' if os.name == 'nt' else 'clear')
         print('''
             ███████╗████████╗███████╗ ██████╗  █████╗ ████████╗ ██████╗ ██████╗ 
             ██╔════╝╚══██╔══╝██╔════╝██╔════╝ ██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
